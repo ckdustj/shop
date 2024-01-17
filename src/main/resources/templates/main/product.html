@@ -273,7 +273,8 @@
 
 </style>
 <body>
-  <section id="content_wrapper">
+  <form id="content_wrapper">
+      <input type="hidden" th:value="${product.no}">
       <section class="contents">
           <img class="prod_img" th:src="${product.productImgs[0].savedFileName}">
           <section class="prod_info">
@@ -296,10 +297,9 @@
               </select>
               <select>
                   <option hidden="hidden">수량</option>
-                  <option>1개</option>
-                  <option>2개</option>
-                  <option>3개</option>
-                  <option>직접 입력</option>
+                  <option value="1">1개</option>
+                  <option value="2">2개</option>
+                  <option value="3">3개</option>
               </select>
               <div class="result_price"><p>총 상품금액</p> <span> 20000원</span></div>
               <button id="buyBtn">구매하기</button>
@@ -310,7 +310,7 @@
               </div>
           </section>
       </section>
-  </section>
+  </form>
   <section class="moreInfo">
 
       <div class="title">[ 상세 설명 ]</div>

@@ -34,4 +34,10 @@ public interface UserMapper {
 
     @Update("UPDATE `user` SET `pw_re_token` = #{pwReToken}, `pw_re_token_expire` = #{pwReTokenExpire} WHERE `id` = #{id}")
     void update_user_repw_token(UserDTO userDTO);
+
+    // 유저가 위시리스트(찜) 하기
+    void insert_wishlist(
+            @Param("userId") String userId,
+            @Param("productNo") int productNo
+    );
 }

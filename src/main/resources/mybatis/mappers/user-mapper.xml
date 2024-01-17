@@ -40,4 +40,6 @@
         (#{snsInfo.id}, #{id}, #{snsInfo.clientName}, now())
     </insert>
 
+
+
 </mapper>

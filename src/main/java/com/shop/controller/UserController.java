@@ -1,10 +1,12 @@
 package com.shop.controller;
 
+import com.shop.dto.shopping.ShoppingCartDTO;
 import com.shop.dto.user.UserDTO;
 import com.shop.service.UserCertificationService;
 import com.shop.service.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -79,4 +81,27 @@ public class UserController {
     public String find_user_id(@PathVariable String phoneNumber){
        return userService.find_user_id(phoneNumber);
     }
+
+    ///***********************************************
+    // 유저의 장바구니 화면으로 이동
+    @GetMapping("/cart")
+    public String get_shopping_cart_page(){
+        return "main/cart";
+    }
+
+    // 유저가 장바구니에 상품을 넣음
+    @PostMapping("/cart")
+    public String add_shopping_cart(
+            @AuthenticationPrincipal UserDTO userDTO,
+            ShoppingCartDTO shoppingCartDTO
+    ){
+        shoppingCartDTO.setUser(userDTO);
+        userService.add_product_in_shopping_cart(shoppingCartDTO);
+        // 유저 장바구니 창으로 이동시킨다
+        return "redirect:/user/cart";
+    }
+
+
+
+
 }

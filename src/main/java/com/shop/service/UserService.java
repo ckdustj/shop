@@ -1,6 +1,8 @@
 package com.shop.service;
 
+import com.shop.dto.shopping.ShoppingCartDTO;
 import com.shop.dto.user.UserDTO;
+import com.shop.mapper.ShoppingCartMapper;
 import com.shop.mapper.UserMapper;
 import jakarta.mail.internet.MimeMessage;
 import net.minidev.json.JSONArray;
@@ -14,6 +16,8 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestOperations;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -39,6 +43,8 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private RestOperations restOperations;
+    @Autowired
+    private ShoppingCartMapper shoppingCartMapper;
 
     private final String SEND_EMAIL_FROM = "dustj3419@naver.com";
     private final String RESET_PASSWORD_URL = "http://localhost:8080/repw?token=";
@@ -176,4 +182,13 @@ public class UserService {
         mimeMessageHelper.setText(htmlContent, true); // 내용은 뭔가
         javaMailSender.send(mimeMessage);
     }
+
+    // 장바구니에 상품 담기
+    @Transactional
+    public void add_product_in_shopping_cart(ShoppingCartDTO shoppingCartDTO){
+        shoppingCartMapper.insert_shopping_cart(shoppingCartDTO);
+        shoppingCartMapper.insert_shopping_cart_option(shoppingCartDTO);
+    }
+
+
 }

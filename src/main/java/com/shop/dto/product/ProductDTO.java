@@ -21,6 +21,7 @@ public class ProductDTO {
     private LocalDateTime writeDate;
     private Category category;
 
+    private List<ProductDTO> productTitles;
     private List<ImageFileDTO> productImgs;
     private List<ProductOptionDTO> productOptions;
 }
