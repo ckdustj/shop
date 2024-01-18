@@ -87,8 +87,8 @@
         text-align: center;
         justify-content: space-between;
         margin-top: 10px;
-        margin-left: 50px;
-        margin-right: 50px;
+        /*margin-left: 50px;*/
+        /*margin-right: 50px;*/
         font-size: 1rem;
         font-weight: bold;
         padding: 0 50px 0 50px;
@@ -219,7 +219,7 @@
     }
 
     .ad + .ad {
-        /*margin-left: 100px;*/
+        margin-left: 100px;
     }
     #search{
         margin-left: 5%;
@@ -305,6 +305,55 @@
         cursor: pointer;
     }
 
+    .theme {
+        display: inline-block;
+        position: relative;
+        /*margin: 10px;*/
+        width: 195px;
+        font-size: 1.3rem;
+    }
+
+    .theme:hover > .subTheme {
+        display: inline-block;
+        flex-direction: column;
+    }
+
+    .subTheme {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background-color: #f9f9f9;
+        width: 200px;
+        font-size: 1rem;
+        margin-top: 5px;
+    }
+
+    .subTheme > li{
+        list-style: none;
+    }
+
+    .subTheme > ul > li{
+        width: 150px;
+        margin-top: 5px;
+    }
+
+    .subTheme > ul > li:last-child{
+        margin-bottom: 5px;
+    }
+
+    .subTheme > li:hover{
+        cursor: pointer;
+    }
+
+    .subTheme > ul{
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        padding-right: 15px;
+        text-align: center;
+    }
+
     </style>
 <body>
     <div class="contentWrapper">
@@ -321,14 +370,59 @@
             </div>
         </header>
         <section class="tab">
-            <div>국내도서</div>
-            <div>외국도서</div>
-            <div>중고샵</div>
-            <div>eBook</div>
-<!--            <div>ACC</div>-->
+<!--            <div id="wrap">-->
+                <div class="theme">
+                    국내도서
+                    <div class="subTheme">
+                        <ul>
+                            <li>가정 살림</li>
+                            <li>건강 취미</li>
+                            <li>경제 경영</li>
+                            <li>국어/외국어 사전</li>
+                            <li>대학교재</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="theme">
+                    외국도서
+                    <div class="subTheme">
+                        <ul>
+                            <li>ELT사전</li>
+                            <li>문학소설</li>
+                            <li>경제 경영</li>
+                            <li>인문사회</li>
+                            <li>예술 대중문화</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="theme">
+                    중고샵
+                    <div class="subTheme">
+                        <ul>
+                            <li>중고도서</li>
+                            <li>중고 외국도서</li>
+                            <li>중고 CD/LP</li>
+                            <li>중고 DVD/BD</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="theme">
+                    eBook
+                    <div class="subTheme">
+                        <ul>
+                            <li>로맨스</li>
+                            <li>민화</li>
+                            <li>판타지/무협</li>
+                            <li>소설</li>
+                            <li>경제 경영</li>
+                        </ul>
+                    </div>
+                </div>
+<!--            </div>-->
         </section>
-
-
 
         <main class="shopMain">
             <nav class="category">

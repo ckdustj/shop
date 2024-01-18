@@ -95,6 +95,9 @@ public class UserController {
             @AuthenticationPrincipal UserDTO userDTO,
             ShoppingCartDTO shoppingCartDTO
     ){
+        log.info("userDTO: " + userDTO);
+        log.info("shoppingCartDTO: " + shoppingCartDTO);
+
         shoppingCartDTO.setUser(userDTO);
         userService.add_product_in_shopping_cart(shoppingCartDTO);
         // 유저 장바구니 창으로 이동시킨다

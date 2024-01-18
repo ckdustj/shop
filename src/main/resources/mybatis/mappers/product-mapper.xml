@@ -64,7 +64,7 @@
     </select>
 
 <!--    카테고리 중 대분류가 아닌 카테고리들만 가졍혼다 -->
-    <select id="get_category_by_no" resultType="Category">
+    <select id="get_category_by_no" resultType="com.shop.dto.product.Category">
         WITH RECURSIVE `category_cte` AS
         (
         SELECT `no`, `parent_no`, `name`, `level` FROM `category` WHERE `no` = #{parentNo}
