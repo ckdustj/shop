@@ -8,9 +8,13 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @Log4j2
 @Controller
@@ -85,7 +89,13 @@ public class UserController {
     ///***********************************************
     // 유저의 장바구니 화면으로 이동
     @GetMapping("/cart")
-    public String get_shopping_cart_page(){
+    public String get_shopping_cart_page(
+            @AuthenticationPrincipal UserDTO userDTO,
+            Model model
+    ){
+        List<ShoppingCartDTO> shoppingCartDTOS = userService.get_shopping_cart_of_user(userDTO);
+        model.addAttribute("shoppingCarts", shoppingCartDTOS);
+        System.out.println(shoppingCartDTOS);
         return "main/cart";
     }
 
@@ -104,7 +114,28 @@ public class UserController {
         return "redirect:/user/cart";
     }
 
+    // 유저의 장바구니에 존재하는 상품의 수량 변경
+    @ResponseBody
+    @PatchMapping("/cart")
+    public void change_product_amount_of_shopping_cart(
+            @AuthenticationPrincipal UserDTO userDTO,
+            ShoppingCartDTO shoppingCartDTO
+    ){
+        log.info(shoppingCartDTO);
+        shoppingCartDTO.setUser(userDTO);
+        userService.change_product_amount_of_shopping_cart(shoppingCartDTO);
+//        return "redirect:/user/cart";
+    }
 
+    // 카트에 있는 상품 장바구니에서 제거하기
+    @ResponseBody
+    @DeleteMapping("/cart")
+    public void delete_product_of_shopping_cart(
+            @AuthenticationPrincipal UserDTO userDTO,
+            List<ShoppingCartDTO> shoppingCartDTOS
+    ){
+        userService.delete_product_in_shopping_cart(userDTO, shoppingCartDTOS);
+    }
 
 
 }

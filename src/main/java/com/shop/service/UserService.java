@@ -27,6 +27,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -49,13 +50,14 @@ public class UserService {
     private final String SEND_EMAIL_FROM = "dustj3419@naver.com";
     private final String RESET_PASSWORD_URL = "http://localhost:8080/repw?token=";
 
-    @Autowired JavaMailSender javaMailSender;
+    @Autowired
+    JavaMailSender javaMailSender;
 
     @Autowired
     TemplateEngine templateEngine;
 
     // 회원가입
-    public void join_user(UserDTO userDTO){
+    public void join_user(UserDTO userDTO) {
         // 패스워드 인코딩 작업
         userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         // DB 삽입
@@ -63,20 +65,20 @@ public class UserService {
     }
 
     // 유저 아이디 찾기
-    public String find_user_id(String phoneNumber){
+    public String find_user_id(String phoneNumber) {
         String userID = userMapper.find_user_id(phoneNumber);
-        if (Objects.isNull(userID)){
+        if (Objects.isNull(userID)) {
             return "유저 존재 X";
         }
         try {
             return "유저 ID :" + userID;
-        }catch (Exception e){
+        } catch (Exception e) {
             return "일시적 문제...";
         }
     }
 
-    private void send_sms_messsage(String phoneNumberTo) throws Exception{
-        String timestamp = String.valueOf(Timestamp.valueOf(LocalDateTime.now()).getTime());			// current timestamp (epoch)
+    private void send_sms_messsage(String phoneNumberTo) throws Exception {
+        String timestamp = String.valueOf(Timestamp.valueOf(LocalDateTime.now()).getTime());            // current timestamp (epoch)
         String signature = makeSignature("POST", "/sms/v2/services/" + NAVER_SMS_SERVICE_KEY + "/messages", timestamp);
         // 받을 사람 등록
         JSONObject sendMessageTemplate = new JSONObject();
@@ -103,9 +105,9 @@ public class UserService {
         ResponseEntity<String> response = restOperations.exchange(requestEntity, String.class);
     }
 
-    public String makeSignature(String method, String url, String timestamp) throws Exception{
-        String space = " ";					// one space
-        String newLine = "\n";					// new line
+    public String makeSignature(String method, String url, String timestamp) throws Exception {
+        String space = " ";                    // one space
+        String newLine = "\n";                    // new line
 
         String message = new StringBuilder()
                 .append(method)
@@ -128,9 +130,9 @@ public class UserService {
     }
 
     // 비밀번호를 재설정하는 페이지에서 유효한 유저의 검사 (+후 메일 전송)
-    public String find_user_pw(UserDTO userDTO){
+    public String find_user_pw(UserDTO userDTO) {
         UserDTO findedUser = userMapper.find_user_by_email(userDTO);
-        if(Objects.isNull(findedUser)){
+        if (Objects.isNull(findedUser)) {
             return "유저 업써";
         }
         try {
@@ -144,34 +146,34 @@ public class UserService {
             userMapper.update_user_repw_token(findedUser);
             // 메일 전송함
             send_mail_of_user_password(findedUser.getEmail(), token);
-        }catch (Exception e){
+        } catch (Exception e) {
             return "관리자에게 연락하세요";
         }
         return "발송함 !";
     }
 
     // 비밀번호를 재설정하는 페이지의 유효한 token 검사
-    public boolean find_user_by_token(String token){
+    public boolean find_user_by_token(String token) {
         // 타고 온 링크의 token 값으로 해당 유저가 존재하는지 검사
         UserDTO userDTO = userMapper.find_user_by_token(token);
         // 해당 유저가 존재하지 않거나, 토큰이 만료되었으면 실패!
-        if (Objects.isNull(userDTO) || userDTO.getPwReTokenExpire().isBefore(LocalDateTime.now())){
+        if (Objects.isNull(userDTO) || userDTO.getPwReTokenExpire().isBefore(LocalDateTime.now())) {
             return false;
         }
         return true;
     }
 
     // 유저 패스워드 변경하기
-    public void update_user_pw(UserDTO userDTO){
+    public void update_user_pw(UserDTO userDTO) {
         userMapper.update_user_password(userDTO);
     }
 
     // 유저에게 비밀번호 변경 메일 (URL이 첨부되어있는) 전송하기
-    public void send_mail_of_user_password(String to, String token) throws Exception{
+    public void send_mail_of_user_password(String to, String token) throws Exception {
         System.out.println("메일 보내기 시도");
 
         Context ctx = new Context();
-        ctx.setVariable("link",  RESET_PASSWORD_URL + token);
+        ctx.setVariable("link", RESET_PASSWORD_URL + token);
 
         String htmlContent = templateEngine.process("/mail/re-password.html", ctx);
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -183,12 +185,32 @@ public class UserService {
         javaMailSender.send(mimeMessage);
     }
 
-    // 장바구니에 상품 담기
-    @Transactional
-    public void add_product_in_shopping_cart(ShoppingCartDTO shoppingCartDTO){
-        shoppingCartMapper.insert_shopping_cart(shoppingCartDTO);
-        shoppingCartMapper.insert_shopping_cart_option(shoppingCartDTO);
+    // 유저의 장바구니 정보 가져오기
+    public List<ShoppingCartDTO> get_shopping_cart_of_user(UserDTO userDTO) {
+        return shoppingCartMapper.get_shopping_cart(userDTO);
     }
 
+    // 장바구니에 상품 담기
+    @Transactional
+    public void add_product_in_shopping_cart(ShoppingCartDTO shoppingCartDTO) {
+        shoppingCartMapper.insert_shopping_cart(shoppingCartDTO);
+        if (Objects.nonNull(shoppingCartDTO.getProduct().getProductOptions())) {
+            shoppingCartMapper.insert_shopping_cart_option(shoppingCartDTO);
+        }
+    }
+
+    // 장바구니에 담긴 상품 하나의 수량 변경하기
+    public void change_product_amount_of_shopping_cart(ShoppingCartDTO shoppingCartDTO){
+        shoppingCartMapper.change_product_amount(shoppingCartDTO);
+    }
+
+    // 장바구니에 담긴 여러 상품 한번에 제거하기
+    public void delete_product_in_shopping_cart(UserDTO userDTO, List<ShoppingCartDTO> shoppingCartDTOS){
+        shoppingCartDTOS.forEach(shoppingCartDTO -> {
+            shoppingCartDTO.setUser(userDTO);
+        });
+        shoppingCartMapper.delete_product(shoppingCartDTOS);
+    }
 
 }
+

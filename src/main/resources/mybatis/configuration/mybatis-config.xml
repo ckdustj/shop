@@ -12,7 +12,13 @@
         <setting name="mapUnderscoreToCamelCase" value="true"/>
     </settings>
     <typeAliases>
-        <typeAlias type="com.shop.dto.user.UserDTO" alias="UserDTO" />
+        <typeAlias type="com.shop.dto.ImageFileDTO" alias="ImageFileDTO" />
+        <typeAlias type="com.shop.dto.product.Category" alias="Category" />
 
+        <typeAlias type="com.shop.dto.user.UserDTO" alias="UserDTO" />
+        <typeAlias type="com.shop.dto.shopping.ShoppingCartDTO" alias="ShoppingCartDTO" />
+
+        <typeAlias type="com.shop.dto.product.ProductDTO" alias="ProductDTO" />
+        <typeAlias type="com.shop.dto.product.ProductOptionDTO" alias="ProductOptionDTO" />
     </typeAliases>
 </configuration>

@@ -21,6 +21,7 @@ public class SecurityConfig {
         http.csrf(c -> {});
         // REQUEST
         http.authorizeHttpRequests(configure -> {
+            configure.requestMatchers("/user/cart").authenticated();
             configure.anyRequest().permitAll();
         });
         // FORM-LOGIN
